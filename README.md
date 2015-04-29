@@ -15,3 +15,7 @@ The code for the robot control Arduino Uno is located in Robocode.
 Using the TeensyLC requires additional support from PJRC, downloadable [here](https://www.pjrc.com/teensy/td_download.html).
 
 We use an Adafruit PCD8544 LCD display to monitor our transmitter, which requires a library available [here](https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library).
+
+## About Us
+
+We are <matthew.haney@colorado.edu "Matthew Haney">.
