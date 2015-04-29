@@ -18,4 +18,4 @@ We use an Adafruit PCD8544 LCD display to monitor our transmitter, which require
 
 ## About Us
 
-We are <matthew.haney@colorado.edu "Matthew Haney">.
+We are Joe Blake, Matthew Haney, Rachel Lawson, and Milica Notaros.  Fear us.
