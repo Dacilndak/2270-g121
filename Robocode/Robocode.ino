@@ -29,8 +29,6 @@ const float TURN_RIGHT = 4.29;      // Pulses per degree, right
 const float TURN_LEFT = 4.29;       // Pulses per degree, left
 
 // Pin definitions
-const int pinCONTROL = 5;   // Input 5, wireless control signals
-
 const int ENCODER_L = 2;    // external interrupt 0, connect left encoder output
 const int ENCODER_R = 3;    // external interrupt 1, connect right encoder output
 
@@ -46,7 +44,7 @@ const int pinCC_R = 12;     // Connect reference voltage PWM output for right wh
 
 const int LED = 13;         // Arduino onboard status LED is connected to pin 13
 
-void forward(int time, float spd)
+void forward(float spd)
 {
   digitalWrite(pinCC_L, LOW);
   digitalWrite(pinCW_R, LOW);
@@ -55,10 +53,9 @@ void forward(int time, float spd)
   // Write voltage reference PWM signals
   analogWrite(pinREF_L, (int)(spd*MAX_LEFT));
   analogWrite(pinREF_R, (int)(spd*MAX_RIGHT));
-  delay(time);
 }
 
-void backward(int time, float spd)
+void backward(float spd)
 {
   digitalWrite(pinCC_R, LOW);
   digitalWrite(pinCW_L, LOW);
@@ -67,10 +64,9 @@ void backward(int time, float spd)
   // Write voltage reference PWM signals
   analogWrite(pinREF_L, (int)(spd*MAX_LEFT));
   analogWrite(pinREF_R, (int)(spd*MAX_RIGHT));
-  delay(time);
 }
 
-void left(int time, float spd)
+void left(float spd)
 {
   digitalWrite(pinCW_L, LOW);
   digitalWrite(pinCW_R, LOW);
@@ -79,10 +75,9 @@ void left(int time, float spd)
   // Write voltage reference PWM signals
   analogWrite(pinREF_L, (int)(spd*MAX_LEFT));
   analogWrite(pinREF_R, (int)(spd*MAX_RIGHT));
-  delay(time);
 }
 
-void right(int time, float spd)
+void right(float spd)
 {
   digitalWrite(pinCC_L, LOW);
   digitalWrite(pinCC_R, LOW);
@@ -91,7 +86,6 @@ void right(int time, float spd)
   // Write voltage reference PWM signals
   analogWrite(pinREF_L, (int)(spd*MAX_LEFT));
   analogWrite(pinREF_R, (int)(spd*MAX_RIGHT));
-  delay(time);
 }
 
 void halt()
@@ -105,7 +99,6 @@ void halt()
 }
 
 void setup() {
-  pinMode(pinCONTROL, INPUT);      // set the CONTROL pin to be an input
   pinMode(pinON,INPUT);            // set the ON pin to be an input
   
   pinMode(pinCW_L,OUTPUT);         // set the CW_L pin to be an output
@@ -129,8 +122,8 @@ void setup() {
 }
 
 char tempBuffer[100] = {0};
-char cmdBuffer[13] = {0};
-int pos = 1;
+String cmdString = "S0000", istring = "N0000";
+int pos = 0;
 float spd = 0.0;
 int timeout = 0;
 
@@ -140,57 +133,77 @@ void clearTempBuffer() {
     }
 }
 
-void clearCmdBuffer() {
-  for(int i=0; i<13; i++) {
-    cmdBuffer[i] = 0;
-    }
-}
-
 void serialEvent() {
   if (!Serial.available()) { return; }
-  while (Serial.available()) {
-    tempBuffer[pos-1]=(char)Serial.read();
-    pos+=1;
+  digitalWrite(13, HIGH);
+  pos = 0;
+  while (Serial.available() && pos < 100) {
+    tempBuffer[pos]=(char)Serial.read();
+    pos += 1;
   }
-  if((tempBuffer[2]==43)&&(tempBuffer[5]==68)){ //checks if message is a TCP message if so reads to cmdBuffer
-    for(int i=0;i<7;i++){
-      cmdBuffer[i]=tempBuffer[i+11];
+  istring = tempBuffer;
+  for (int i = 0; i < istring.length(); i++) {
+    switch(istring[i]) {
+    case 'S':
+    case 'F':
+    case 'B':
+    case 'L':
+    case 'R':
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+      break;
+    default:
+      istring[i] = '0';
     }
-   clearTempBuffer();
   }
+  if (istring.length() >= 5) {
+    cmdString = istring;
+    spd = ( (float)atoi(cmdString.substring(1, 5).c_str()) ) / 1023;
+  }
+  digitalWrite(13, LOW);
 }
 
 void loop() {
-  spd = atof(&cmdBuffer[1]);
-  switch (cmdBuffer[0]) {
+  switch (cmdString[0]) {
+  // Move forward
   case 'F':
   case 'f':
-    timeout = 0;
-    forward(default_increment, spd);
+    forward(spd);
     break;
+  // Move back
   case 'B':
   case 'b':
-    timeout = 0;
-    backward(default_increment, spd);
+    backward(spd);
     break;
+  // Move left
   case 'L':
   case 'l':
-    timeout = 0;
-    left(default_increment, spd);
+    left(spd);
     break;
+  // Move right
   case 'R':
   case 'r':
-    timeout = 0;
-    right(default_increment, spd);
+    right(spd);
+    break;
+  // No action or hold
+  case 'N':
+  case 'n':
+    break;
+  // Stop
+  case 'S':
+  case 's':
+    halt();
     break;
   default:
-    timeout = 0;
-    halt();
     break;
   }
-  if (timeout > 10) {
-    halt();
-    clearCmdBuffer();
-    timeout = 10;
-  }
+  delay(100);
 }
