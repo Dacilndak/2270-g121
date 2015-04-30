@@ -1,0 +1,14 @@
+# LaTeX temporary files
+*.aux
+*.log
+*.toc
+
+# Emacs temporary files
+*~
+.*~
+*#
+.*#
+
+# Misc
+.DS_Store
+.Trashes

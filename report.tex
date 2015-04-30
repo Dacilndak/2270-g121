@@ -1,0 +1,102 @@
+\documentclass[12pt,scrartcl,titlepage]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{setspace}
+\usepackage{ifpdf}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{graphicx}
+
+\pagestyle{fancy}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\fancyhf{}
+
+\begin{document}
+
+\lhead{G121 Final Project Report}
+\rhead{J. Blake, M. Haney, R. Lawson, M. Notaros}
+\cfoot{\thepage}
+
+\input{./report-titlepage.tex}
+
+\tableofcontents
+
+\pagebreak
+
+% The report should focus on the Lab 6 add-on project components, and how the components are incorporated with the circuits completed in Labs 1-5. Provide a full description of the robot additional control circuits with design, simulation, and experimental results. Describe how the project design is split into more manageable sub-circuits or blocks for design, testing and de-bugging. Comment on design, hardware and code challenges that you had to work through to get the project circuitry fully operational. Propose future extensions to improve the performance and capabilities.
+
+\section{Introduction}
+
+Our project involved utilizing a glove and a muscle sensor to operate our robot wirelessly. The glove was wired with two flex sensors and an accelerometer, used as forward/backward/left/right input.  The muscle sensor control;ed the speed of the robot by sensing the magnitude of the electrical activity of the muscle and translating this into either fast, medium, or slow.  These components deliver commands wirelessly to the robot over WiFi.
+
+\section{Materials}
+
+\begin{description}
+
+\item[Hardware]
+  
+  \begin{itemize}
+  \item EMG Sensor (Sparkfun Muscle Sensor v3)
+  \item Arduino UNO R3
+  \item 2x Flex Sensor (FS7548)
+  \item Accelerometer (ADXL337)
+  \item Teensy 3.1 (PJRC)
+  \item TeensyLC (PJRC)
+  \item 2x Wireless Transmitter Module (ESP8266)
+  \item Gardening Glove, Duct Tape
+  \item Robot with lab 1-5 components
+  \item Common lab equipment (Oscilloscopes, power supplies, etc)
+  \end{itemize}
+  
+\item[Software]
+  
+  \begin{itemize}
+  \item Arduino IDE
+  \item PJRC Teensy Software (Arduino IDE Extension)
+  \item IntuiLink Data Capture
+  \item LTSpice
+  \end{itemize}
+
+\end{description}
+
+\section{Implementation}
+
+This project can be loosely divided into three slices: an array of inputs, a wireless transmitter that encodes the input data into a command, and a wireless receiver that translates the command into an action taken by the robot.
+
+\subsection{Input}
+
+Input was collected from five sources: an electromyograph (muscle sensor), two flex sensors, an accelerometer, a button, and a potentiometer.
+
+\subsubsection{Glove}
+
+There were two modes of input, one of which read the EMG to determine drive speed, the other of which read a potentiometer to determine drive speed.  The potentiometer was intended as a backup in case the EMG failed or was unreliable.  Pushing a button triggered an interrupt in code to switch between these two modes of operation.
+
+\subsubsection{EMG}
+
+In 
+
+\subsubsection{Flex Sensors}
+
+\subsubsection{Accelerometer}
+
+\subsection{Transmitter}
+
+\subsection{Receiver}
+
+\subsubsection{}
+
+\section{Results}
+
+Results
+
+\section{Next Steps}
+
+Future Work
+
+\end{document}
